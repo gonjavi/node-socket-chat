@@ -12,7 +12,7 @@ class Usuarios {
     return this.personas;
   }
 
-  getPersona() {
+  getPersona(id) {
     // filter regresa arreglo, [0] para tener la primera posicion
     let persona = this.personas.filter(persona => persona.id === id)[0]; 
     return persona;
@@ -28,7 +28,7 @@ class Usuarios {
 
   borrarPersona(id) {
     let personaBorrada = this.getPersona(id);    
-    this.personas = this.personas.filter(persona.id !== id);
+    this.personas = this.personas.filter(persona => persona.id !== id);
     return personaBorrada;
   }
 }

@@ -15,11 +15,11 @@ io.on('connection', (client) => {
 
     client.join(data.sala);
 
-    let personas = usuarios.agregarPersona(client.id, data.nombre, data.sala);
+    usuarios.agregarPersona(client.id, data.nombre, data.sala);
 
-    client.broadcast.emit('listaPersona', usuarios.getPersonas());
+    client.broadcast.to(data.sala).emit('listaPersona', usuarios.getPersonasPorSala(data.salsa));
 
-    callback(personas);
+    callback(usuarios.getPersonasPorSala(data.sala));
   });  
 
   client.on('crearMensaje', (data) => {
@@ -27,14 +27,14 @@ io.on('connection', (client) => {
     let persona = usuarios.getPersona(client.id);
 
     let mensaje = crearMensaje(persona.nombre, data.mensaje);
-    client.broadcast.emit('crearMensaje', mensaje);
+    client.broadcast.to(data.sala).emit('crearMensaje', mensaje);
   });
 
   client.on('disconnect', () => {
     let personaBorrada = usuarios.borrarPersona(client.id);
 
-    client.broadcast.emit('crearMensaje', crearMensaje('Administrador', `${ personaBorrada.nombre } salió`));
-    client.broadcast.emit('listaPersona', usuarios.getPersonas());
+    client.broadcast.to(personaBorrada.salsa).emit('crearMensaje', crearMensaje('Administrador', `${ personaBorrada.nombre } salió`));
+    client.broadcast.to(personaBorrada.salsa).emit('listaPersona', usuarios.getPersonasPorSala(personaBorrada.sala));
 
   });
 
